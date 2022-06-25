@@ -1,0 +1,7 @@
+.vs
+bin
+bin-obj
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
