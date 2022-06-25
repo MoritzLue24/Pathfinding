@@ -11,11 +11,10 @@ public:
 	virtual inline float getFps() const final { return m_Fps; }
 
 	virtual void Run() final;
-
 	virtual void HandleEvents(sf::Event event) {}
 	virtual void Render(sf::RenderWindow& window) {}
 
-	sf::Color clearColor{ 30, 30, 30 };
+	sf::Color clearColor = { 30, 30, 30 };
 
 protected: 
 	sf::RenderWindow m_Window;
@@ -24,4 +23,3 @@ private:
 	float m_DeltaTime = 0.0f;
 	float m_Fps = 0.0f;
 };
-

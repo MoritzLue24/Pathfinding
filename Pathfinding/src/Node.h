@@ -6,8 +6,8 @@
 
 struct Color
 {
-	Color(uint8_t r, uint8_t g, uint8_t b) : arr{ (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, 1.0f } {}
-	Color() : arr{ 0.0f, 0.0f, 0.0f, 1.0f } {}
+	Color(uint8_t r, uint8_t g, uint8_t b) : arr{ r / 255.0f, g / 255.0f, b / 255.0f, 1 } {}
+	Color() : arr{ 0, 0, 0, 1 } {}
 	~Color() {}
 
 	inline sf::Color sfColor() const 

@@ -8,14 +8,17 @@
 #include "GUI/ColorPicker.h"
 
 
-Application::Application(const char* title, uint32_t rows, uint32_t columns)
-	: m_Grid(rows, columns, 20, 10, 1), BaseWindow(title, columns* (20 + 1), rows* (20 + 1)), m_AStar(m_Grid)
+Application::Application(const char* title, uint32_t rows, uint32_t columns, uint32_t cellSize, uint32_t nodeSize, uint32_t nodeMargin)
+	: m_Grid(rows, columns, cellSize, nodeSize, nodeMargin), BaseWindow(title, columns * (cellSize + nodeMargin), rows* (cellSize + nodeMargin)), m_AStar(m_Grid)
 {
 	for (auto& color : Node::colors) 
 		m_ColorPickers.emplace_back(color.first, color.second.arr);
 	m_ColorPickers.emplace_back("Grid color", m_Grid.lineColor);
 
-	ImGui::GetStyle().ItemSpacing = { 0.0f, 10.0f };
+	ImGui::GetStyle().ItemSpacing = { 0, 10 };
+	ImGui::GetStyle().WindowPadding = { 10, 10 };
+	ImGui::GetStyle().FramePadding = { 5, 5 };
+	ImGui::GetStyle().ScrollbarSize = 10;
 }
 
 void Application::HandleEvents(sf::Event event)
@@ -23,40 +26,38 @@ void Application::HandleEvents(sf::Event event)
 	if (m_GUIHovered)
 		return;
 
-	// Create start & end node
+	// Create start / end node on left mouse click depending on the m_CurrentTool
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (m_CurrentTool == "end" || m_CurrentTool == "start"))
 	{
 		sf::Vector2i mousePos = sf::Mouse::getPosition(m_Window);
-		Node& node = m_Grid.GetNodeByPos(m_Grid.CoordToGrid((uint32_t)mousePos.y), m_Grid.CoordToGrid((uint32_t)mousePos.x));
+		Node& node = m_Grid.GetNodeByPos(m_Grid.CoordToGrid(mousePos.y), m_Grid.CoordToGrid(mousePos.x));
 
 		try
 		{
+			// Set the current start / end node to empty to prevent the user from creating more than one start / end node
 			m_Grid.GetNodeByType(m_CurrentTool).type = "empty";
 		} 
-		catch (NodeNotFoundException)
-		{
-			std::cout << m_CurrentTool << " node cannot be deleted. New " << m_CurrentTool << " node has been created" << std::endl;
-		}
+		catch (NodeNotFoundException) {}
 		node.type = m_CurrentTool;
 	}
 }
 
 void Application::Render(sf::RenderWindow& window)
 {
-	// Add wall & remove node events
 	if (!m_GUIHovered)
 	{
+		// Create wall / delete node, when the user is pressing / holding the left mouse button (depending on the m_CurrentTool)
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
 			if (m_CurrentTool == "wall")
 			{
 				sf::Vector2i mousePos = sf::Mouse::getPosition(m_Window);
-				m_Grid.GetNodeByPos(m_Grid.CoordToGrid((uint32_t)mousePos.y), m_Grid.CoordToGrid((uint32_t)mousePos.x)).type = "wall";
+				m_Grid.GetNodeByPos(m_Grid.CoordToGrid(mousePos.y), m_Grid.CoordToGrid(mousePos.x)).type = "wall";
 			}
 			else if (m_CurrentTool == "delete")
 			{
 				sf::Vector2i mousePos = sf::Mouse::getPosition(m_Window);
-				m_Grid.GetNodeByPos(m_Grid.CoordToGrid((uint32_t)mousePos.y), m_Grid.CoordToGrid((uint32_t)mousePos.x)).type = "empty";
+				m_Grid.GetNodeByPos(m_Grid.CoordToGrid(mousePos.y), m_Grid.CoordToGrid(mousePos.x)).type = "empty";
 			}
 		}
 	}
@@ -72,10 +73,10 @@ void Application::Render(sf::RenderWindow& window)
 
 	// If the mouse is inside the config menu, set m_GUIHovered to true
 	sf::Vector2i mousePos = sf::Mouse::getPosition(m_Window);
-	m_GUIHovered = m_ConfigRect.intersects({ (float)mousePos.x, (float)mousePos.y, 1.0f, 1.0f });
+	m_GUIHovered = m_ConfigRect.intersects({ (float)mousePos.x, (float)mousePos.y, 1, 1 });
 
 	// FPS text
-	ImGui::LabelText(std::to_string(getFps()).c_str(), "FPS");
+	ImGui::LabelText(std::to_string(getFps()).c_str(), "Fps");
 
 	// Check boxes
 	ImGui::Checkbox("Diagonals", &m_Grid.diagonals);
@@ -96,33 +97,37 @@ void Application::Render(sf::RenderWindow& window)
 	}
 
 	// Node size
-	ImGui::SliderInt("Node size", &m_Grid.nodeSize, 0, m_Grid.getCellSize() * 4);
+	ImGui::SliderInt("Node size", &m_Grid.nodeSize, 0, 100);
 
 	// Reset
-	if (ImGui::Button("Reset", { m_ConfigRect.width / 2 - 13, 30 }))
+	float padding = ImGui::GetStyle().WindowPadding.x;
+	float btnWidth = m_ConfigRect.width - 2 * padding;
+	float btnHeight = 30;
+	if (ImGui::Button("Reset", { btnWidth / 2 - padding / 2, btnHeight }))
 	{
 		m_AStar.Reset();
 		m_Grid.Reset();
 	}
 
 	// Run
-	ImGui::SameLine(m_ConfigRect.width / 2, 13.0f / 2);
-	if (ImGui::Button("Run", { m_ConfigRect.width / 2 - 13, 30 }))
+	ImGui::SameLine(m_ConfigRect.width / 2, padding / 2);
+	if (ImGui::Button("Run", { btnWidth / 2 - padding / 2, btnHeight }))
 	{
 		m_Grid.UpdateNeighbors();
 		m_AStar.Run();
 	}
 
 	// Color pickers
-	if (ImGui::Button("Colors", { m_ConfigRect.width - 15, 30 }))
+	if (ImGui::Button("Colors", { btnWidth, btnHeight }))
 		m_ColorWindowOpen = !m_ColorWindowOpen;
 
 	if (!m_ColorWindowOpen)
 	{
-		ImGui::BeginChildFrame(1, { 200, m_ColorPickers.size() * (20.0f + 10.0f) + 22.0f });
-		ImGui::Text("Colors");
+		auto framePadding = ImGui::GetStyle().FramePadding;
+		ImGui::BeginChildFrame(1, { 200, (float)m_ColorPickers.size() * (20 + framePadding.y * 2)});
+
 		for (ColorPicker& colorPicker : m_ColorPickers)
-			colorPicker.Draw({ 185, 20 });
+			colorPicker.Draw({ 200 - 2 * framePadding.x, 20 });
 
 		ImGui::EndChildFrame();
 	}

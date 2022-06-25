@@ -10,7 +10,7 @@
 class Application : public BaseWindow
 {
 public:
-	Application(const char* title, uint32_t rows, uint32_t column);
+	Application(const char* title, uint32_t rows, uint32_t columns, uint32_t cellSize = 20, uint32_t nodeSize = 10, uint32_t nodeMargin = 1);
 	~Application() {}
 
 private:

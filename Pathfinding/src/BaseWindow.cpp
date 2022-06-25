@@ -10,7 +10,6 @@ BaseWindow::BaseWindow(const char* title, uint32_t width, uint32_t height, uint3
 {
 	m_Window.setFramerateLimit(maxFps);
 
-	// Init ImGui
 	ImGui::SFML::Init(m_Window);
 	ImGui::GetIO().IniFilename = nullptr;
 }
@@ -29,10 +28,10 @@ void BaseWindow::Run()
 		sf::Event event;
 		while (m_Window.pollEvent(event))
 		{
-			ImGui::SFML::ProcessEvent(event);
-
 			if (event.type == sf::Event::Closed)
 				m_Window.close();
+
+			ImGui::SFML::ProcessEvent(event);
 			HandleEvents(event);
 		}
 
