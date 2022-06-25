@@ -1,4 +1,5 @@
 #include "BaseWindow.h"
+
 #include <iostream>
 #include <imgui.h>
 #include <imgui-SFML.h>

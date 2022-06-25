@@ -3,8 +3,6 @@
 #include <array>
 #include <imgui.h>
 
-#include "Widget.h"
-
 
 class ColorPicker
 {
@@ -19,4 +17,3 @@ private:
 	std::string m_Label;
 	float* m_ColorArray;
 };
-

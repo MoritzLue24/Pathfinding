@@ -1,6 +1,5 @@
 #pragma once
 #include <queue>
-
 #include <SFML//Graphics.hpp>
 
 #include "../Grid.h"
