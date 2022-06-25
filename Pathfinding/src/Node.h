@@ -28,8 +28,8 @@ class Node
 public:
 	static std::unordered_map<std::string, Color> colors;
 
-	Node(uint32_t row, uint32_t column);
-	~Node();
+	Node(uint32_t row, uint32_t column) : m_Row(row), m_Column(column) {}
+	~Node() {}
 
 	inline uint32_t getRow() const { return m_Row; }
 	inline uint32_t getColumn() const { return m_Column; }
@@ -48,4 +48,3 @@ public:
 private:
 	uint32_t m_Row, m_Column;
 };
-

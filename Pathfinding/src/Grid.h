@@ -41,8 +41,8 @@ public:
 	void Reset();
 	void Draw(sf::RenderWindow& window);
 
-	float lineColor[4] = {25 / 255, 25 / 255, 25 / 255, 1.0f};
-	bool diagonals = false, drawGrid = false;
+	float lineColor[4] = {0.2f, 0.2f, 0.2f, 1};
+	bool diagonals = true, drawGrid = true;
 	int nodeSize;
 
 private:
@@ -50,4 +50,3 @@ private:
 	uint32_t m_CellSize, m_NodeMargin;
 	std::vector<std::vector<Node>> m_Content;
 };
-

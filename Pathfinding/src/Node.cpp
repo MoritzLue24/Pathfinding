@@ -11,17 +11,6 @@ std::unordered_map<std::string, Color> Node::colors = {
 	{"closed", Color(30, 25, 25)}
 };
 
-Node::Node(uint32_t row, uint32_t column)
-	: m_Row(row), m_Column(column)
-{
-
-}
-
-Node::~Node()
-{
-
-}
-
 void Node::Draw(sf::RenderWindow& window, uint32_t cellSize, uint32_t nodeSize, uint32_t nodeMargin) const
 {
 	if (type == "empty")
