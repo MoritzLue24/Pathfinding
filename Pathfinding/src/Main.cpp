@@ -3,6 +3,6 @@
 
 int main(int, char**) 
 {
-	Application("MyTitle", 40, 60).Run();
+	Application("Path finding", 40, 60, 20, 10).Run();
 	return 0;
 }

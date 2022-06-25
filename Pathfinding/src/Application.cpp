@@ -74,6 +74,8 @@ void Application::Render(sf::RenderWindow& window)
 	// If the mouse is inside the config menu, set m_GUIHovered to true
 	sf::Vector2i mousePos = sf::Mouse::getPosition(m_Window);
 	m_GUIHovered = m_ConfigRect.intersects({ (float)mousePos.x, (float)mousePos.y, 1, 1 });
+	if (ImGui::IsWindowCollapsed())
+		m_GUIHovered = false;
 
 	// FPS text
 	ImGui::LabelText(std::to_string(getFps()).c_str(), "Fps");
