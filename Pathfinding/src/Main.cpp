@@ -3,8 +3,6 @@
 
 int main(int, char**) 
 {
-	Application app("MyTitle", 40, 60);
-	app.Run();
-
+	Application("MyTitle", 40, 60).Run();
 	return 0;
 }
