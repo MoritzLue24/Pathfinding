@@ -118,10 +118,11 @@ void Application::Render(sf::RenderWindow& window)
 
 	if (!m_ColorWindowOpen)
 	{
-		ImGui::BeginChildFrame(1, { 200, 400 });
+		ImGui::BeginChildFrame(1, { 200, m_ColorPickers.size() * (20.0f + 10.0f) + 22.0f });
 		ImGui::Text("Colors");
 		for (ColorPicker& colorPicker : m_ColorPickers)
 			colorPicker.Draw({ 185, 20 });
+
 		ImGui::EndChildFrame();
 	}
 	ImGui::End();
