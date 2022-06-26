@@ -92,8 +92,6 @@ void AStar::SetPath()
 	if (!m_Finished)
 		return;
 
-	std::cout << "asd" << std::endl;
-
 	Node* current = m_EndNode;
 	while (current != m_StartNode) {
 		auto x1 = (float)(current->getColumn() * (m_Grid.getCellSize() + m_Grid.getNodeMargin()) + m_Grid.getCellSize() / 2);
