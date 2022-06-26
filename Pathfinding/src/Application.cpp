@@ -9,7 +9,7 @@
 
 
 Application::Application(const char* title, uint32_t rows, uint32_t columns, uint32_t cellSize, uint32_t nodeSize, uint32_t nodeMargin)
-	: m_Grid(rows, columns, cellSize, nodeSize, nodeMargin), BaseWindow(title, columns * (cellSize + nodeMargin), rows* (cellSize + nodeMargin)), m_AStar(m_Grid)
+	: m_Grid(rows, columns, cellSize, nodeSize, nodeMargin), BaseWindow(title, columns * (cellSize + nodeMargin), rows* (cellSize + nodeMargin), 400), m_AStar(m_Grid)
 {
 	for (auto& color : Node::colors) 
 		m_ColorPickers.emplace_back(color.first, color.second.arr);
@@ -78,11 +78,12 @@ void Application::Render(sf::RenderWindow& window)
 		m_GUIHovered = false;
 
 	// FPS text
-	ImGui::LabelText(std::to_string(getFps()).c_str(), "Fps");
+	ImGui::LabelText(std::to_string(round(getFps())).c_str(), "Fps");
 
 	// Check boxes
 	ImGui::Checkbox("Diagonals", &m_Grid.diagonals);
 	ImGui::Checkbox("Draw grid", &m_Grid.drawGrid);
+	ImGui::Checkbox("Cells as path", &m_AStar.cellsAsPath);
 	
 	// Tools
 	if (ImGui::BeginCombo("Tools", m_CurrentTool.c_str()))
@@ -99,7 +100,7 @@ void Application::Render(sf::RenderWindow& window)
 	}
 
 	// Node size
-	ImGui::SliderInt("Node size", &m_Grid.nodeSize, 0, 100);
+	ImGui::SliderInt("Node size", &m_Grid.nodeSize, 0, m_Grid.getCellSize());
 
 	// Reset
 	float padding = ImGui::GetStyle().WindowPadding.x;

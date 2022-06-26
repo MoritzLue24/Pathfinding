@@ -60,6 +60,7 @@ void AStar::Update()
 	if (current == m_EndNode) {
 		m_Running = false;
 		m_Finished = true;
+		SetPath();
 		return;
 	}
 
@@ -86,10 +87,12 @@ void AStar::Update()
 		current->type = "closed";
 }
 
-void AStar::RenderPath(sf::RenderWindow& window)
+void AStar::SetPath()
 {
 	if (!m_Finished)
 		return;
+
+	std::cout << "asd" << std::endl;
 
 	Node* current = m_EndNode;
 	while (current != m_StartNode) {
@@ -99,14 +102,23 @@ void AStar::RenderPath(sf::RenderWindow& window)
 		auto x2 = (float)(current->cameFrom->getColumn() * (m_Grid.getCellSize() + m_Grid.getNodeMargin()) + m_Grid.getCellSize() / 2);
 		auto y2 = (float)(current->cameFrom->getRow() * (m_Grid.getCellSize() + m_Grid.getNodeMargin()) + m_Grid.getCellSize() / 2);
 
-		sf::Vertex line[] =
-		{
-			sf::Vertex({ x1, y1 }, Node::colors["path"].sfColor()),
-			sf::Vertex({ x2, y2 }, Node::colors["path"].sfColor())
-		};
-		window.draw(line, 2, sf::Lines);
 		current = current->cameFrom;
-		// current->type = current->type != "start" ? "path" : "start";
+		if (cellsAsPath)
+			current->type = current->type != "start" ? "path" : "start";
+		m_PathLines.push_back(sf::Vertex({ x1, y1 }, Node::colors["path"].sfColor()));
+		m_PathLines.push_back(sf::Vertex({ x2, y2 }, Node::colors["path"].sfColor()));
+	}
+}
+
+void AStar::RenderPath(sf::RenderWindow& window)
+{
+	if (!m_Finished)
+		return;
+
+	if (!cellsAsPath)
+	{
+		sf::Vertex* vertices = &m_PathLines[0];
+		window.draw(vertices, m_PathLines.size(), sf::Lines);
 	}
 	m_StartNode->Draw(window, m_Grid.getCellSize(), m_Grid.nodeSize, m_Grid.getNodeMargin());
 	m_EndNode->Draw(window, m_Grid.getCellSize(), m_Grid.nodeSize, m_Grid.getNodeMargin());
@@ -121,6 +133,8 @@ void AStar::Reset()
 
 	m_OpenSet = std::priority_queue<OpenSetItem>();
 	m_OpenSetItems.clear();
+
+	m_PathLines.clear();
 
 	m_Running = false;
 	m_Finished = false;

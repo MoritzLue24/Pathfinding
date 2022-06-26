@@ -1,5 +1,6 @@
 #pragma once
 #include <queue>
+#include <vector>
 #include <SFML//Graphics.hpp>
 
 #include "../Grid.h"
@@ -26,8 +27,11 @@ public:
 
 	void Run();
 	void Update();
+	void SetPath();
 	void RenderPath(sf::RenderWindow& window);
 	void Reset();
+
+	bool cellsAsPath = false;
 
 private:
 
@@ -38,4 +42,5 @@ private:
 	Node* m_EndNode;
 	std::priority_queue<OpenSetItem> m_OpenSet;
 	std::vector<Node> m_OpenSetItems;
+	std::vector<sf::Vertex> m_PathLines;
 };
