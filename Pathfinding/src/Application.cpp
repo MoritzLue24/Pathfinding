@@ -9,7 +9,7 @@
 
 
 Application::Application(const char* title, uint32_t rows, uint32_t columns, uint32_t cellSize, uint32_t nodeSize, uint32_t nodeMargin)
-	: m_Grid(rows, columns, cellSize, nodeSize, nodeMargin), BaseWindow(title, columns * (cellSize + nodeMargin), rows* (cellSize + nodeMargin), 400), m_AStar(m_Grid)
+	: m_Grid(rows, columns, cellSize, nodeSize, nodeMargin), BaseWindow(title, columns * (cellSize + nodeMargin), rows* (cellSize + nodeMargin), 10000), m_AStar(m_Grid)
 {
 	for (auto& color : Node::colors) 
 		m_ColorPickers.emplace_back(color.first, color.second.arr);
