@@ -27,4 +27,3 @@ private:
 	std::vector<ColorPicker> m_ColorPickers;
 	bool m_ColorWindowOpen = false;
 };
-
